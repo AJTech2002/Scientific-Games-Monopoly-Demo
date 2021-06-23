@@ -16,6 +16,8 @@ public class PlayerData
     [HideInInspector]
     public List<int> diceRolls = new List<int>();
 
+    public int passedGo = 0;
+
     [Header("Assets")]
     public float cash;
     public List<Property> properties = new List<Property>();
@@ -35,6 +37,18 @@ public class PlayerData
         this.currentBoardPosition = newPosition;
         boardHistory.Add(lastBoardPosition);
         diceRolls.Add(diceRoll);
+
+        if (lastBoardPosition > 1 && (currentBoardPosition >= 1 && currentBoardPosition < lastBoardPosition))
+        {
+            PassedGo();
+        }
+    }
+
+    public void PassedGo ()
+    {
+        passedGo += 1;
+        cash += 200;
+        Debug.Log($"{name}: Passed GO, Collect $200");
     }
 
 }
