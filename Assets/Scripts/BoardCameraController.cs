@@ -18,6 +18,9 @@ public class BoardCameraController : MonoBehaviour
     public static bool activeRotate = false;
     public static Vector3 pivotPoint;
 
+    [Header("Zooming")]
+    public float scrollSpeed;
+
     private void OnDrawGizmos()
     {
         //Center Position Debugged
@@ -50,6 +53,9 @@ public class BoardCameraController : MonoBehaviour
             activeRotate = false;
         }
 
+        transform.position += (-transform.position).normalized*Input.GetAxis("Mouse ScrollWheel") * scrollSpeed;
+       
+
         currentMouse = Input.mousePosition;
 
         mouseDelta = lastMouse - currentMouse;
@@ -59,7 +65,6 @@ public class BoardCameraController : MonoBehaviour
     {
         if (activeRotate)
         {
-  
             transform.RotateAround(center, Vector3.up, mouseDelta.x * -mouseDeltaSpeed);
             transform.RotateAround(center, transform.right, mouseDelta.y * mouseDeltaSpeed);
         }

@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System.Threading.Tasks;
 public class GameManager : MonoBehaviour
 {
     [Header("Game Options")]
@@ -33,6 +33,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private static DiceRoller diceRoller;
 
     private void Awake()
     {
@@ -50,6 +51,10 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        diceRoller = GameObject.FindObjectOfType<DiceRoller>();
+
+        if (!diceRoller) Debug.LogError("Dependency of Dice Roller missing");
+
         SetupPlayers();
     }
 
@@ -64,7 +69,9 @@ public class GameManager : MonoBehaviour
 
         currentPlayer = 0;
 
-        GameManager.BeginDiceRoll();
+        UIManager.Instance.currentPlayerNumber.text = (currentPlayer + 1).ToString();
+
+        BeginDiceRoll();
     }
 
     public static void IncrementPlayer ()
@@ -75,6 +82,8 @@ public class GameManager : MonoBehaviour
         {
             GameManager.CurrentPlayer = 0;
         }
+
+        UIManager.Instance.currentPlayerNumber.text = (GameManager.CurrentPlayer + 1).ToString();
     }
 
     //End game when all players have passed GO 3 Times
@@ -91,14 +100,23 @@ public class GameManager : MonoBehaviour
         return true;
     }
 
-    public static void BeginDiceRoll ()
+    //Game Stage 1 
+    public void BeginDiceRoll ()
     {
-        if (!GameHasFinished())
+        if (GameHasFinished())
         {
             HandleGameCompletion();
             return;
         }
 
+        diceRoller.BeginRolling(new System.Action<int>(HandlePlayerMovement));
+
+    }
+
+    //Game Stage 2
+    public void HandlePlayerMovement (int rollResult)
+    {
+        print($"Player {currentPlayer} rolled a {rollResult}");
     }
 
 
